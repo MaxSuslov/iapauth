@@ -1,7 +1,7 @@
 const express = require('express');
 const metadata = require('gcp-metadata');
 const {OAuth2Client} = require('google-auth-library');
-const axios = require('axios');
+// const axios = require('axios');
 
 const app = express();
 const oAuth2Client = new OAuth2Client();
@@ -45,22 +45,21 @@ async function validateAssertion(assertion) {
   };
 }
 
-async function userPhotoUrl(sub) {
-  axios.get(`https://people.googleapis.com/v1/people/${sub}?resourceName=people/${sub}&personFields=photos&key=AIzaSyCzkJdn_70EBl_nkJUzXGcdmu7XvOqMGmU`)
-  .then(response => {
-    return response.data.photos[0].url;
-  })
-  .catch(error => {
-    console.log(error);
-  });
-}
+// async function userPhotoUrl(sub) {
+//   axios.get(`https://people.googleapis.com/v1/people/${sub}?resourceName=people/${sub}&personFields=photos&key=AIzaSyCzkJdn_70EBl_nkJUzXGcdmu7XvOqMGmU`)
+//   .then(response => {
+//     return response.data.photos[0].url;
+//   })
+//   .catch(error => {
+//     console.log(error);
+//   });
+// }
 
 app.get('/', async (req, res) => {
   const assertion = req.header('X-Goog-IAP-JWT-Assertion');
   const googleID = req.header('X-Goog-Authenticated-User-Id')
   let email = 'None';
   let sub = googleID;
-  // let imgurl = userPhotoUrl;
 
   try {
     const info = await validateAssertion(assertion);
@@ -70,12 +69,11 @@ app.get('/', async (req, res) => {
     console.log(error);
   }
 
-  try {
-    const userPhoto = await userPhotoUrl(sub);
-    return userPhoto;
-  } catch (error) {
-    console.log(error);
-  }
+  // try {
+  //   const userPhoto = await userPhotoUrl(sub);
+  // } catch (error) {
+  //   console.log(error);
+  // }
 
   res.status(200).send(
     `<!DOCTYPE html>
@@ -89,7 +87,7 @@ app.get('/', async (req, res) => {
     <body>
       <div class="container">
         <div id="introwrapper">
-          <img id="avatar" src="${userPhoto}" alt="ProfilePicture" />
+          <img id="avatar" src="" alt="ProfilePicture" />
         </div>
       
         <h1 id="heading" class="display-4 text-center py-1">IAP Oauth App</h1>
